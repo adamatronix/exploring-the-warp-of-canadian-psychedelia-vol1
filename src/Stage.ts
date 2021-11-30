@@ -4,7 +4,7 @@ import Cone from './Cone';
 class Stage {
   container:HTMLDivElement;
   cones:any = [];
-  points:any = Array(10).fill(''); 
+  points:any = Array(50).fill(''); 
   location:any;
   constructor() {
     new P5(this.sketch);
@@ -12,7 +12,6 @@ class Stage {
 
   coneSetup = (p5: P5) => {
     const angleIterate = p5.radians(360) /this.points.length;
-    console.log(angleIterate);
     this.points.forEach((item:any, index:any) => {
       this.cones.push(new Cone(p5,index,angleIterate, this.location));
      
