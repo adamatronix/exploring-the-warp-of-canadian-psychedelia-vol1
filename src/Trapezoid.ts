@@ -41,9 +41,13 @@ class Trapezoid {
   }
 
   init = () => {
+    this.calcTrapezoidPosition(this.position);
     
-    let leftPoint = findPointBetweenTwo(0.5,this.guideLeft.x1,this.guideLeft.y1,this.guideLeft.x2,this.guideLeft.y2);
-    let rightPoint = findPointBetweenTwo(0.5,this.guideRight.x1,this.guideRight.y1,this.guideRight.x2,this.guideRight.y2);
+  }
+
+  calcTrapezoidPosition = (position:any) => {
+    let leftPoint = findPointBetweenTwo(position,this.guideLeft.x1,this.guideLeft.y1,this.guideLeft.x2,this.guideLeft.y2);
+    let rightPoint = findPointBetweenTwo(position,this.guideRight.x1,this.guideRight.y1,this.guideRight.x2,this.guideRight.y2);
     let dx = leftPoint.x - rightPoint.x;
     let dy = leftPoint.y - rightPoint.y;
     let radians = Math.atan2(dy,dx);
@@ -66,10 +70,12 @@ class Trapezoid {
       topX: topPoint ? topPoint.x : null,
       topY: topPoint ? topPoint.y : null
     }
+
   }
 
   draw = () => {
-    this.p5.fill('black');
+    this.calcTrapezoidPosition(this.position);
+    this.p5.fill('white');
     this.p5.beginShape();
     this.p5.vertex(this.trapezoid.rightX, this.trapezoid.rightY);
     this.p5.vertex(this.trapezoid.bottomX, this.trapezoid.bottomY);

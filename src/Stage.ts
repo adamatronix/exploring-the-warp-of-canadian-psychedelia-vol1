@@ -4,7 +4,7 @@ import Cone from './Cone';
 class Stage {
   container:HTMLDivElement;
   cones:any = [];
-  points:any = Array(50).fill(''); 
+  points:any = Array(90).fill(''); 
   location:any;
   constructor() {
     new P5(this.sketch);
@@ -29,7 +29,7 @@ class Stage {
       canvas.style('left', 0);
       canvas.style('top', 0);
       canvas.style('z-index', 1);
-      p5.frameRate(10);
+      p5.frameRate(30);
       this.location = { x: p5.width / 2, y: p5.height / 2 };
       this.coneSetup(p5);
     }
@@ -37,6 +37,7 @@ class Stage {
 
     p5.draw = () => {
       p5.clear();
+      p5.background('black');
       this.cones.forEach((cone:Cone) => {
         cone.draw();
       })
