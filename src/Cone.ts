@@ -1,4 +1,8 @@
 import * as P5 from 'p5';
+import findPointBetweenTwo from './utils/findPointBetweenTwo';
+import polarToCartesian from './utils/polarToCartesian';
+import intersect from './utils/intersect';
+import Trapezoid from './Trapezoid';
 
 interface LineObject {
   x1:number,
@@ -6,6 +10,17 @@ interface LineObject {
   x2:number,
   y2:number,
   angle:number
+}
+
+interface TrapezoidObject {
+  leftX:number,
+  leftY:number,
+  rightX:number,
+  rightY:number,
+  bottomX:any,
+  bottomY:any,
+  topX:any,
+  topY:any
 }
 
 class Cone {
@@ -16,6 +31,7 @@ class Cone {
   centreLine:LineObject;
   guideLeftLine:any;
   guideRightLine:any;
+  trapezoids:any = [];
 
   constructor(p5: P5, index:number, angleIterate:number, location:any) {
     this.p5 = p5;
@@ -24,52 +40,87 @@ class Cone {
     this.location = location;
 
     this.setupLines();
+    this.setupTrap();
   }
 
   setupLines = () => {
-    let x =  this.location.x + (this.p5.cos(this.angleIterate * this.index) * 2000);
-    let y =  this.location.y + (this.p5.sin(this.angleIterate * this.index) * 2000);
+    let centrePoint = polarToCartesian(this.location.x,this.location.y, this.angleIterate * this.index, 4500);
     this.centreLine = {
       x1: this.location.x,
       y1: this.location.y,
-      x2: x,
-      y2: y,
+      x2: centrePoint.x,
+      y2: centrePoint.y,
       angle: this.angleIterate * this.index
     }
 
-    let guideLeftX = this.location.x + this.p5.cos((this.angleIterate * this.index) - this.angleIterate/2) * 2000;
-    let guideLeftY = this.location.y + this.p5.sin((this.angleIterate * this.index) - this.angleIterate/2) * 2000;
-
+    let guideLeftPoint = polarToCartesian(this.location.x,this.location.y, (this.angleIterate * this.index) - this.angleIterate/2, 4500);
     this.guideLeftLine = {
       x1: this.location.x,
       y1: this.location.y,
-      x2: guideLeftX,
-      y2: guideLeftY,
+      x2: guideLeftPoint.x,
+      y2: guideLeftPoint.y,
       angle: (this.angleIterate * this.index) - this.angleIterate/2
     }
 
-    let guideRightX = this.location.x + this.p5.cos((this.angleIterate * this.index) + this.angleIterate/2) * 2200;
-    let guideRightY = this.location.y + this.p5.sin((this.angleIterate * this.index) + this.angleIterate/2) * 2200;
-
+    let guideRightPoint = polarToCartesian(this.location.x,this.location.y, (this.angleIterate * this.index) + this.angleIterate/2, 4500);
     this.guideRightLine = {
       x1: this.location.x,
       y1: this.location.y,
-      x2: guideRightX,
-      y2: guideRightY,
+      x2: guideRightPoint.x,
+      y2: guideRightPoint.y,
       angle: (this.angleIterate * this.index) + this.angleIterate/2
     }
+  }
 
+  setupTrap = () => {
 
+    for(let i = 0; i < 25; i++) {
+      let t =  i / 25;
+      let position = t*t*t*t*t*t;
+      console.log(position)
+      this.trapezoids.push(new Trapezoid(this.p5,position,this.centreLine,this.guideLeftLine,this.guideRightLine));
+    }
+    
   }
 
   draw = () => {
-    this.p5.strokeWeight(1);
+    /*this.p5.strokeWeight(1);
     this.p5.stroke(0, 0, 0);
     this.p5.line(this.centreLine.x1,this.centreLine.y1, this.centreLine.x2,this.centreLine.y2);
     this.p5.stroke(255, 204, 0);
     this.p5.line(this.guideLeftLine.x1,this.guideLeftLine.y1, this.guideLeftLine.x2,this.guideLeftLine.y2);
     this.p5.stroke('blue');
-    this.p5.line(this.guideRightLine.x1,this.guideRightLine.y1, this.guideRightLine.x2, this.guideRightLine.y2);
+    this.p5.line(this.guideRightLine.x1,this.guideRightLine.y1, this.guideRightLine.x2, this.guideRightLine.y2);*/
+
+
+    
+
+    /*this.p5.fill('red');
+    this.p5.circle(this.trapezoid.leftX, this.trapezoid.leftY, 20);
+    this.p5.circle(this.trapezoid.rightX, this.trapezoid.rightY, 20);
+    this.p5.circle(this.trapezoid.topX, this.trapezoid.topY, 20);
+    this.p5.circle(this.trapezoid.bottomX, this.trapezoid.bottomY, 20);*/
+
+    this.trapezoids.forEach((trapezoid:Trapezoid) => {
+      trapezoid.draw();
+
+      /*let dx = trapezoid.trapezoid.leftX - trapezoid.trapezoid.rightX;
+      let dy = trapezoid.trapezoid.leftY - trapezoid.trapezoid.rightY;
+      let radians = Math.atan2(dy,dx);
+      let guideLine = polarToCartesian(trapezoid.trapezoid.rightX,trapezoid.trapezoid.rightY,radians, 2000);
+      this.p5.stroke(50, 50, 50);
+      this.p5.line(guideLine.x, guideLine.y, trapezoid.trapezoid.rightX, trapezoid.trapezoid.rightY);
+
+      let adjustRad = this.p5.radians(45);
+      let angleLine = polarToCartesian(trapezoid.trapezoid.rightX,trapezoid.trapezoid.rightY,radians-adjustRad, 2000);
+      this.p5.stroke('#fae');
+      this.p5.line(angleLine.x, angleLine.y, trapezoid.trapezoid.rightX, trapezoid.trapezoid.rightY);
+
+      let adjustTopRad = this.p5.radians(135);
+      let angleTopLine = polarToCartesian(trapezoid.trapezoid.leftX,trapezoid.trapezoid.leftY,radians+adjustTopRad, 2000);
+      this.p5.stroke('#fae');
+      this.p5.line(angleTopLine.x, angleTopLine.y, trapezoid.trapezoid.leftX, trapezoid.trapezoid.leftY);*/
+    })
   }
 }
 
