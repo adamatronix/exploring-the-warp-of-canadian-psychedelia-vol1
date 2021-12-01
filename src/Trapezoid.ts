@@ -2,6 +2,8 @@ import * as P5 from 'p5';
 import findPointBetweenTwo from './utils/findPointBetweenTwo';
 import polarToCartesian from './utils/polarToCartesian';
 import intersect from './utils/intersect';
+import distanceOfLine from './utils/distanceOfLine';
+
 
 interface LineObject {
   x1:number,
@@ -29,6 +31,7 @@ class Trapezoid {
   guideCenter:LineObject;
   guideLeft:LineObject;
   guideRight:LineObject;
+  radians:number;
 
   constructor(p5:P5, position:number, guideCenter:LineObject, guideLeft:LineObject, guideRight:LineObject) {
     this.p5 = p5;
@@ -51,6 +54,7 @@ class Trapezoid {
     let dx = leftPoint.x - rightPoint.x;
     let dy = leftPoint.y - rightPoint.y;
     let radians = Math.atan2(dy,dx);
+    this.radians = radians;
 
     let adjustRad = this.p5.radians(60);
     let bottomLine = polarToCartesian(rightPoint.x,rightPoint.y,radians-adjustRad, 2000);
@@ -73,15 +77,57 @@ class Trapezoid {
 
   }
 
-  draw = () => {
+  calcTrapezoidDraw = (maskPoint:any) => {
+
+    const rightDistance = distanceOfLine(this.guideRight.x1,this.guideRight.y1,this.trapezoid.rightX,this.trapezoid.rightY);
+    const topDistance = distanceOfLine(this.guideRight.x1,this.guideRight.y1,this.trapezoid.topX,this.trapezoid.topY);
+
+    if(maskPoint.distance >= topDistance)
+      return;
+
+
+    let rightX = this.trapezoid.rightX;
+    let rightY = this.trapezoid.rightY;
+    let bottomX = this.trapezoid.bottomX;
+    let bottomY = this.trapezoid.bottomY;
+
+    if(maskPoint.distance >= rightDistance) {
+      rightX = maskPoint.x;
+      rightY = maskPoint.y;
+      let adjustRad = this.p5.radians(60);
+      let bottomLine = polarToCartesian(rightX,rightY,this.radians-adjustRad, 2000);
+      let bottomPoint = intersect(this.guideLeft.x1,this.guideLeft.y1,this.guideLeft.x2,this.guideLeft.y2, rightX,rightY, bottomLine.x, bottomLine.y);
+      bottomX = bottomPoint ? bottomPoint.x : null;
+      bottomY = bottomPoint ? bottomPoint.y : null;
+    }
+    
+
+    return {
+      leftX: this.trapezoid.leftX,
+      leftY: this.trapezoid.leftY,
+      rightX: rightX,
+      rightY: rightY,
+      bottomX: bottomX,
+      bottomY: bottomY,
+      topX: this.trapezoid.topX,
+      topY: this.trapezoid.topY
+    }    
+  }
+
+  draw = (maskPoint:any) => {
     this.calcTrapezoidPosition(this.position);
-    this.p5.fill('white');
-    this.p5.beginShape();
-    this.p5.vertex(this.trapezoid.rightX, this.trapezoid.rightY);
-    this.p5.vertex(this.trapezoid.bottomX, this.trapezoid.bottomY);
-    this.p5.vertex(this.trapezoid.leftX, this.trapezoid.leftY);
-    this.p5.vertex(this.trapezoid.topX, this.trapezoid.topY);
-    this.p5.endShape(this.p5.CLOSE);
+    const shape = this.calcTrapezoidDraw(maskPoint);
+
+    if(shape) {
+      this.p5.fill('white');
+      this.p5.beginShape();
+      this.p5.vertex(shape.rightX, shape.rightY);
+      this.p5.vertex(shape.bottomX, shape.bottomY);
+      this.p5.vertex(shape.leftX, shape.leftY);
+      this.p5.vertex(shape.topX, shape.topY);
+      this.p5.endShape(this.p5.CLOSE);
+    }
+    
   }
 }
 
