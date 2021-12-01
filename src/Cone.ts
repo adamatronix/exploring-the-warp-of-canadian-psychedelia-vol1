@@ -1,7 +1,7 @@
 import * as P5 from 'p5';
 import findPointBetweenTwo from './utils/findPointBetweenTwo';
 import polarToCartesian from './utils/polarToCartesian';
-import intersect from './utils/intersect';
+import distanceOfLine from './utils/distanceOfLine';
 import Trapezoid from './Trapezoid';
 
 interface LineObject {
@@ -12,15 +12,10 @@ interface LineObject {
   angle:number
 }
 
-interface TrapezoidObject {
-  leftX:number,
-  leftY:number,
-  rightX:number,
-  rightY:number,
-  bottomX:any,
-  bottomY:any,
-  topX:any,
-  topY:any
+interface MaskPoint {
+  x:number,
+  y:number,
+  distance:number
 }
 
 class Cone {
@@ -32,6 +27,10 @@ class Cone {
   guideLeftLine:any;
   guideRightLine:any;
   trapezoids:any = [];
+  maskPoint:MaskPoint;
+  maskPointDistanceFromLocation:number;
+  counter:any = 0;
+
 
   constructor(p5: P5, index:number, angleIterate:number, location:any) {
     this.p5 = p5;
@@ -62,6 +61,8 @@ class Cone {
       angle: (this.angleIterate * this.index) - this.angleIterate/2
     }
 
+
+    console.log(this.maskPoint);
     let guideRightPoint = polarToCartesian(this.location.x,this.location.y, (this.angleIterate * this.index) + this.angleIterate/2, 4500);
     this.guideRightLine = {
       x1: this.location.x,
@@ -77,13 +78,27 @@ class Cone {
     for(let i = 0; i < 25; i++) {
       let t =  i / 25;
       let position = t*t*t*t*t*t;
-      console.log(position)
+
       this.trapezoids.push(new Trapezoid(this.p5,position,this.centreLine,this.guideLeftLine,this.guideRightLine));
     }
-    
+  }
+
+  calculateMaskPoint = (percent:any) => {
+    const point = findPointBetweenTwo(percent,this.guideRightLine.x1,this.guideRightLine.y1,this.guideRightLine.x2,this.guideRightLine.y2);
+    this.maskPoint = {
+      x: point.x,
+      y: point.y,
+      distance: distanceOfLine(this.location.x,this.location.y,point.x,point.y)
+    }
   }
 
   draw = () => {
+
+    this.calculateMaskPoint(this.counter);
+    if(this.counter <= 1) {
+      this.counter += 0.001;
+    }
+    
     /*this.p5.strokeWeight(1);
     this.p5.stroke(0, 0, 0);
     this.p5.line(this.centreLine.x1,this.centreLine.y1, this.centreLine.x2,this.centreLine.y2);
@@ -100,9 +115,11 @@ class Cone {
     this.p5.circle(this.trapezoid.rightX, this.trapezoid.rightY, 20);
     this.p5.circle(this.trapezoid.topX, this.trapezoid.topY, 20);
     this.p5.circle(this.trapezoid.bottomX, this.trapezoid.bottomY, 20);*/
+    this.p5.fill('red');
+    this.p5.circle(this.maskPoint.x,this.maskPoint.y,10);
 
     this.trapezoids.forEach((trapezoid:Trapezoid) => {
-      trapezoid.draw();
+      trapezoid.draw(this.maskPoint);
 
       /*let dx = trapezoid.trapezoid.leftX - trapezoid.trapezoid.rightX;
       let dy = trapezoid.trapezoid.leftY - trapezoid.trapezoid.rightY;
