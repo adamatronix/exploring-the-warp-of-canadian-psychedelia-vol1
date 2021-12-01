@@ -52,11 +52,11 @@ class Trapezoid {
     let dy = leftPoint.y - rightPoint.y;
     let radians = Math.atan2(dy,dx);
 
-    let adjustRad = this.p5.radians(45);
+    let adjustRad = this.p5.radians(60);
     let bottomLine = polarToCartesian(rightPoint.x,rightPoint.y,radians-adjustRad, 2000);
     let bottomPoint = intersect(this.guideLeft.x1,this.guideLeft.y1,this.guideLeft.x2,this.guideLeft.y2, rightPoint.x,rightPoint.y, bottomLine.x, bottomLine.y);
 
-    let adjustTopRad = this.p5.radians(135);
+    let adjustTopRad = this.p5.radians(120);
     let topLine = polarToCartesian(leftPoint.x,leftPoint.y,radians+adjustTopRad, 2000);
     let topPoint = intersect(this.guideRight.x1,this.guideRight.y1,this.guideRight.x2,this.guideRight.y2, leftPoint.x, leftPoint.y, topLine.x, topLine.y);
 

@@ -74,9 +74,9 @@ class Cone {
 
   setupTrap = () => {
 
-    for(let i = 0; i < 40; i++) {
-      let t =  i / 40;
-      let position = t*t*t*t*t;
+    for(let i = 0; i < 25; i++) {
+      let t =  i / 25;
+      let position = t*t*t*t*t*t;
       console.log(position)
       this.trapezoids.push(new Trapezoid(this.p5,position,this.centreLine,this.guideLeftLine,this.guideRightLine));
     }
