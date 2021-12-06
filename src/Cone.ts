@@ -62,7 +62,6 @@ class Cone {
     }
 
 
-    console.log(this.maskPoint);
     let guideRightPoint = polarToCartesian(this.location.x,this.location.y, (this.angleIterate * this.index) + this.angleIterate/2, 4500);
     this.guideRightLine = {
       x1: this.location.x,
@@ -93,11 +92,7 @@ class Cone {
   }
 
   draw = () => {
-
     this.calculateMaskPoint(this.counter);
-    if(this.counter <= 1) {
-      this.counter += 0.001;
-    }
     
     /*this.p5.strokeWeight(1);
     this.p5.stroke(0, 0, 0);
