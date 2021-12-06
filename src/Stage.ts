@@ -19,7 +19,7 @@ class Stage {
       this.cones.push(new Cone(p5,index,angleIterate, this.location));
     });
   }
-  
+
   sketch = (p5: P5) => {
 
     p5.setup = () => {

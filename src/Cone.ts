@@ -93,6 +93,7 @@ class Cone {
 
   draw = () => {
     this.calculateMaskPoint(this.counter);
+    this.counter += 0.001;
     
     /*this.p5.strokeWeight(1);
     this.p5.stroke(0, 0, 0);

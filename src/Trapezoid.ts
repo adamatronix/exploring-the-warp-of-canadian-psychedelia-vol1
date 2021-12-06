@@ -32,6 +32,7 @@ class Trapezoid {
   guideLeft:LineObject;
   guideRight:LineObject;
   radians:number;
+  t:number = 0;
 
   constructor(p5:P5, position:number, guideCenter:LineObject, guideLeft:LineObject, guideRight:LineObject) {
     this.p5 = p5;
@@ -49,8 +50,24 @@ class Trapezoid {
   }
 
   calcTrapezoidPosition = (position:any) => {
-    let leftPoint = findPointBetweenTwo(position,this.guideLeft.x1,this.guideLeft.y1,this.guideLeft.x2,this.guideLeft.y2);
-    let rightPoint = findPointBetweenTwo(position,this.guideRight.x1,this.guideRight.y1,this.guideRight.x2,this.guideRight.y2);
+
+
+    let centerPoint = this.getPositionOffset(this.p5,this.guideCenter.angle,position*2000, position*2600);
+    let centerDistance = distanceOfLine(this.guideCenter.x1, this.guideCenter.y1, centerPoint.x, centerPoint.y);
+
+    // the coordinates of the A3 Point
+
+
+    let leftPoint = {
+      x: this.guideLeft.x1 + centerDistance * Math.cos(this.guideLeft.angle),
+      y: this.guideLeft.y1 + centerDistance * Math.sin(this.guideLeft.angle)
+    }
+
+    let rightPoint = {
+      x: this.guideRight.x1 + centerDistance * Math.cos(this.guideRight.angle),
+      y: this.guideRight.y1 + centerDistance * Math.sin(this.guideRight.angle)
+    }
+
     let dx = leftPoint.x - rightPoint.x;
     let dy = leftPoint.y - rightPoint.y;
     let radians = Math.atan2(dy,dx);
@@ -76,6 +93,23 @@ class Trapezoid {
     }
 
   }
+
+
+  getPositionOffset = (p5: P5, angle:number, minPos:number, maxPos:number) => {
+    let radius = 2;
+    let x = p5.cos(angle) * radius;
+    let y = p5.sin(angle) * radius;
+    let p = p5.createVector(x,y).normalize();
+    let n = p5.map(p5.noise(p.x+this.t, p.y+this.t),  0, 1, minPos, maxPos)
+    
+    p.mult(n*2);    
+  
+    return {
+      x: this.guideCenter.x1 + p.x, 
+      y: this.guideCenter.y1 + p.y
+    };
+  }
+
 
   calcTrapezoidDraw = (maskPoint:any) => {
 
@@ -127,6 +161,8 @@ class Trapezoid {
       this.p5.vertex(shape.topX, shape.topY);
       this.p5.endShape(this.p5.CLOSE);
     }
+
+    this.t += 0.007;
     
   }
 }
