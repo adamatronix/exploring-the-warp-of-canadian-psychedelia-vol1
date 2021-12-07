@@ -4,7 +4,7 @@ import Cone from './Cone';
 class Stage {
   container:HTMLDivElement;
   cones:any = [];
-  points:any = Array(90).fill(''); 
+  points:any = Array(120).fill(''); 
   location:any;
   angleIterate:number;
   t:number = 0;

@@ -29,7 +29,8 @@ class Cone {
   trapezoids:any = [];
   maskPoint:MaskPoint;
   maskPointDistanceFromLocation:number;
-  counter:any = 0;
+  counter:any = 1;
+  maskDirection:string = 'down';
 
 
   constructor(p5: P5, index:number, angleIterate:number, location:any) {
@@ -74,8 +75,8 @@ class Cone {
 
   setupTrap = () => {
 
-    for(let i = 0; i < 25; i++) {
-      let t =  i / 25;
+    for(let i = 0; i < 30; i++) {
+      let t =  i / 30;
       let position = t*t*t*t*t*t;
 
       this.trapezoids.push(new Trapezoid(this.p5,position,this.centreLine,this.guideLeftLine,this.guideRightLine));
@@ -93,7 +94,18 @@ class Cone {
 
   draw = () => {
     this.calculateMaskPoint(this.counter);
-    this.counter += 0.001;
+    if(this.counter <= 0) {
+      this.maskDirection = 'up';
+    } else if(this.counter >= 1){
+      this.maskDirection = 'down';
+    }
+
+    if(this.maskDirection === 'up') {
+      this.counter += 0.002;
+    } else if(this.maskDirection === 'down'){
+      this.counter -= 0.002;
+    }
+    
     
     /*this.p5.strokeWeight(1);
     this.p5.stroke(0, 0, 0);
@@ -112,7 +124,7 @@ class Cone {
     this.p5.circle(this.trapezoid.topX, this.trapezoid.topY, 20);
     this.p5.circle(this.trapezoid.bottomX, this.trapezoid.bottomY, 20);*/
     this.p5.fill('red');
-    this.p5.circle(this.maskPoint.x,this.maskPoint.y,10);
+    //this.p5.circle(this.maskPoint.x,this.maskPoint.y,10);
 
     this.trapezoids.forEach((trapezoid:Trapezoid) => {
       trapezoid.draw(this.maskPoint);

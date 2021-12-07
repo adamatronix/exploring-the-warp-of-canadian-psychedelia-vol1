@@ -52,7 +52,7 @@ class Trapezoid {
   calcTrapezoidPosition = (position:any) => {
 
 
-    let centerPoint = this.getPositionOffset(this.p5,this.guideCenter.angle,position*2000, position*2600);
+    let centerPoint = this.getPositionOffset(this.p5,this.guideCenter.angle,position*1900, position*2600);
     let centerDistance = distanceOfLine(this.guideCenter.x1, this.guideCenter.y1, centerPoint.x, centerPoint.y);
 
     // the coordinates of the A3 Point
