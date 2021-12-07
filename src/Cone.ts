@@ -29,7 +29,7 @@ class Cone {
   trapezoids:any = [];
   maskPoint:MaskPoint;
   maskPointDistanceFromLocation:number;
-  counter:any = 1;
+  counter:any = 0;
   maskDirection:string = 'down';
 
 
@@ -99,12 +99,12 @@ class Cone {
     } else if(this.counter >= 1){
       this.maskDirection = 'down';
     }
-
+    /*
     if(this.maskDirection === 'up') {
       this.counter += 0.002;
     } else if(this.maskDirection === 'down'){
       this.counter -= 0.002;
-    }
+    }*/
     
     
     /*this.p5.strokeWeight(1);
