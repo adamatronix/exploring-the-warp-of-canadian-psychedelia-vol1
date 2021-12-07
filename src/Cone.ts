@@ -31,7 +31,7 @@ class Cone {
   trapezoids:any = [];
   maskPoint:MaskPoint;
   maskPointDistanceFromLocation:number;
-  counter:any = 0;
+  counter:any = 1;
   maskDirection:string = 'down';
 
 
@@ -43,6 +43,8 @@ class Cone {
     this.length = length;
     this.setupLines();
     this.setupTrap();
+
+    this.directionChange = this.directionChange.bind(this);
 
   }
 
@@ -101,19 +103,27 @@ class Cone {
     }
   }
 
+  directionChange = () => {
+    this.maskDirection = 'up';
+  }
+
   draw = () => {
+    let self = this;
     this.calculateMaskPoint(this.counter);
     if(this.counter <= 0) {
-      this.maskDirection = 'up';
+      this.maskDirection = null;
+      this.counter = 0.01;
+      setTimeout(this.directionChange, 7000)
     } else if(this.counter >= 1){
       this.maskDirection = 'down';
     }
-    /*
+
     if(this.maskDirection === 'up') {
-      this.counter += 0.002;
+
+      this.counter += 0.009;
     } else if(this.maskDirection === 'down'){
       this.counter -= 0.002;
-    }*/
+    }
     
     
     /*this.p5.strokeWeight(1);
