@@ -7,7 +7,8 @@
   "module": "dist/module.js",
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "parcel build",
+    "build": "parcel build --public-url .",
+    "deploy": "gh-pages -d dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
