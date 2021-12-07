@@ -10,7 +10,8 @@ interface LineObject {
   y1:number,
   x2:number,
   y2:number,
-  angle:number
+  angle:number,
+  length:number
 }
 
 interface TrapezoidObject {
@@ -52,9 +53,9 @@ class Trapezoid {
   calcTrapezoidPosition = (position:any) => {
 
 
-    let centerPoint = this.getPositionOffset(this.p5,this.guideCenter.angle,position*1900, position*2300);
+    let centerPoint = this.getPositionOffset(this.p5,this.guideCenter.angle,position*(this.guideCenter.length/3), position*(this.guideCenter.length/2.5));
     let centerDistance = distanceOfLine(this.guideCenter.x1, this.guideCenter.y1, centerPoint.x, centerPoint.y);
-
+    //console.log(`position:${position}, centerPoint:(${centerPoint.x},${centerPoint.y}), distance:${centerDistance} `)
     // the coordinates of the A3 Point
 
 
@@ -74,11 +75,16 @@ class Trapezoid {
     this.radians = radians;
 
     let adjustRad = this.p5.radians(60);
-    let bottomLine = polarToCartesian(rightPoint.x,rightPoint.y,radians-adjustRad, 2000);
+    let bottomLine = polarToCartesian(rightPoint.x,rightPoint.y,radians-adjustRad, 4000);
     let bottomPoint = intersect(this.guideLeft.x1,this.guideLeft.y1,this.guideLeft.x2,this.guideLeft.y2, rightPoint.x,rightPoint.y, bottomLine.x, bottomLine.y);
 
+    if(!bottomPoint) {
+      console.log(this.guideLeft);
+      console.log(bottomLine);
+      console.log('null');
+    }
     let adjustTopRad = this.p5.radians(120);
-    let topLine = polarToCartesian(leftPoint.x,leftPoint.y,radians+adjustTopRad, 2000);
+    let topLine = polarToCartesian(leftPoint.x,leftPoint.y,radians+adjustTopRad, 4000);
     let topPoint = intersect(this.guideRight.x1,this.guideRight.y1,this.guideRight.x2,this.guideRight.y2, leftPoint.x, leftPoint.y, topLine.x, topLine.y);
 
     this.trapezoid = {
@@ -92,6 +98,7 @@ class Trapezoid {
       topY: topPoint ? topPoint.y : null
     }
 
+    
   }
 
 

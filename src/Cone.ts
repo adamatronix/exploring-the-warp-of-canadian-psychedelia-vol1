@@ -9,7 +9,8 @@ interface LineObject {
   y1:number,
   x2:number,
   y2:number,
-  angle:number
+  angle:number,
+  length:number
 }
 
 interface MaskPoint {
@@ -23,6 +24,7 @@ class Cone {
   index:number;
   angleIterate:number;
   location:any;
+  length:number;
   centreLine:LineObject;
   guideLeftLine:any;
   guideRightLine:any;
@@ -33,53 +35,60 @@ class Cone {
   maskDirection:string = 'down';
 
 
-  constructor(p5: P5, index:number, angleIterate:number, location:any) {
+  constructor(p5: P5, index:number, angleIterate:number, location:any, length:number) {
     this.p5 = p5;
     this.index = index;
     this.angleIterate = angleIterate;
     this.location = location;
-
+    this.length = length;
     this.setupLines();
     this.setupTrap();
+
   }
 
   setupLines = () => {
-    let centrePoint = polarToCartesian(this.location.x,this.location.y, this.angleIterate * this.index, 4500);
+    let centrePoint = polarToCartesian(this.location.x,this.location.y, this.angleIterate * this.index, this.length + 500);
     this.centreLine = {
       x1: this.location.x,
       y1: this.location.y,
       x2: centrePoint.x,
       y2: centrePoint.y,
-      angle: this.angleIterate * this.index
+      angle: this.angleIterate * this.index,
+      length: this.length + 500
     }
 
-    let guideLeftPoint = polarToCartesian(this.location.x,this.location.y, (this.angleIterate * this.index) - this.angleIterate/2, 4500);
+    let guideLeftPoint = polarToCartesian(this.location.x,this.location.y, (this.angleIterate * this.index) - this.angleIterate/2, this.length + 500);
     this.guideLeftLine = {
       x1: this.location.x,
       y1: this.location.y,
       x2: guideLeftPoint.x,
       y2: guideLeftPoint.y,
-      angle: (this.angleIterate * this.index) - this.angleIterate/2
+      angle: (this.angleIterate * this.index) - this.angleIterate/2,
+      length: this.length + 500
     }
 
 
-    let guideRightPoint = polarToCartesian(this.location.x,this.location.y, (this.angleIterate * this.index) + this.angleIterate/2, 4500);
+    let guideRightPoint = polarToCartesian(this.location.x,this.location.y, (this.angleIterate * this.index) + this.angleIterate/2, this.length + 500);
     this.guideRightLine = {
       x1: this.location.x,
       y1: this.location.y,
       x2: guideRightPoint.x,
       y2: guideRightPoint.y,
-      angle: (this.angleIterate * this.index) + this.angleIterate/2
+      angle: (this.angleIterate * this.index) + this.angleIterate/2,
+      length: this.length + 500
     }
   }
 
   setupTrap = () => {
 
-    for(let i = 0; i < 30; i++) {
+    for(let i = 0; i <= 30; i++) {
       let t =  i / 30;
       let position = t*t*t*t*t*t;
 
-      this.trapezoids.push(new Trapezoid(this.p5,position,this.centreLine,this.guideLeftLine,this.guideRightLine));
+      if(position > 0.02) {
+        this.trapezoids.push(new Trapezoid(this.p5,position,this.centreLine,this.guideLeftLine,this.guideRightLine));
+      }
+      
     }
   }
 
